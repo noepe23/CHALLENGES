@@ -41,24 +41,25 @@ ERROR_CHECK(){
 }
 
 #########################################################
-# get number of copies as argument
-copies=${1:-1}
-
-# clean XML files from RECEIVED
-rm $rcvd/*.xml
+# get step2 document as argument
+step2=$1
 
 # generate as many copies as requested
-seq 1 $copies						|
-xargs -i{} 							\
-	sh -c "cat $srcd/step1.xml |\
-		sed -r 's/>([0-9]*)<\//>{}_\1<\//g' \
-	> $rcvd/{}.xml"
-cat $rcvd/*.xml > $rcvd/temp
-rm $rcvd/*.xml
-mv $rcvd/temp $rcvd/step1.xml
-
-# apply XMLDIR to generate step2 file
-cat $rcvd/step1.xml	|
-xmldir /INVOICE   > $rcvd/step2
+cat $step2 							|
+awk '{print $2,$3,$4}'	|
+sed -e 's/LINE\s//g' 		|
+awk '{
+	if($1=="INVOICENO")
+		invno=$2
+	else if($1=="INVOICEVAL")
+		invval=$2
+	else if($1=="LINENO")
+		{
+			print "INVOICENO " invno
+			print "INVOICEVAL " invval
+			print $0
+		}
+	else print $0
+	}'							> $rcvd/step3
 
 exit 0
