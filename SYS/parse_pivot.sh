@@ -51,6 +51,7 @@ done < "$1"
 
 echo -e $LEVEL_DATA >> $OUTFILE
 
+exit 0
 
 ##PIVOT result
 PIVOTFILE="pivot.dat"
