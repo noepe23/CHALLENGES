@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# PROJECT_NAME
+#
+# tiago.mota@unicage.com
+#
+
+# TOP DIR
+tmp=/tmp/$$
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"/..
+
+# LOG
+logd=$dir/LOG
+semd=$dir/SEMAPHORE
+today=$(date +%Y%m%d)
+exec 2> $logd/LOG.$(basename $0).$today.$$
+touch $semd/$(basename $0).$HOSTNAME.START.$today
+
+# LANG/PATH
+export LANG=en_US.UTF-8
+export PATH=/home/UTL:/home/TOOL:$PATH
+
+# DIR
+sysd=$dir/SYS
+srcd=$dir/SRC
+rcvd=$dir/RCV
+lv1d=$dir/DATA/LV1
+lv2d=$dir/DATA/LV2
+lv3d=$dir/DATA/LV3
+lv4d=$dir/DATA/LV4
+outd=$dir/SND
+semd=$dir/SEMAPHORE
+
+
+# ERROR
+ERROR_CHECK(){
+	[ "$(plus ${PIPESTATUS[@]})" -eq 0 ] && return
+	rm -f $tmp-*
+	touch ${semd}/$(basename $0).${HOSTNAME}.END.$today
+	exit 1
+}
+
+#########################################################
+
+
+exit 0

@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# STANDARD DATA RESET SCRIPT
+#
+# tiago.mota@unicage.com
+#
+
+# TOP DIR
+tmp=/tmp/$$
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"/..
+
+# LOG
+logd=$dir/LOG
+semd=$dir/SEMAPHORE
+today=$(date +%Y%m%d)
+exec 2> $logd/LOG.$(basename $0).$today.$$
+touch $semd/$(basename $0).$HOSTNAME.START.$today
+
+# LANG/PATH
+export LANG=en_US.UTF-8
+export PATH=/home/UTL:/home/TOOL:$PATH
+
+# DIR
+sysd=$dir/SYS
+rcvd=$dir/RCV
+srcd=$dir/SRC
+lv1d=$dir/DATA/LV1
+lv2d=$dir/DATA/LV2
+lv3d=$dir/DATA/LV3
+lv4d=$dir/DATA/LV4
+outd=$dir/SND
+
+# ERROR
+ERROR_CHECK(){
+	[ "$(plus ${PIPESTATUS[@]})" -eq 0 ] && return
+	rm -f $tmp-*
+	touch ${semd}/$(basename $0).${HOSTNAME}.END.$today
+	exit 1
+}
+
+#########################################################
+# delete files and folders from LOG/SEMAPHORE
+rm -rf $logd/*
+rm -f $semd/*
+rm -rf $semd/LV1/*
+rm -rf $semd/LV2/*
+rm -rf $semd/LV3/*
+rm -rf $semd/LV4/*
+
+# delete files and folders from data folders
+rm -rf $rcvd/*
+rm -rf $lv1d/*
+rm -rf $lv2d/*
+rm -rf $lv3d/*
+rm -rf $lv4d/*
+rm -rf $outd/*
+
+exit 0
